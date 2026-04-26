@@ -1,0 +1,123 @@
+:root {
+    --cell-size: 6rem;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+main {
+    position: relative;
+}
+
+button {
+    padding: 0.5em;
+    margin: 0.5em;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, var(--cell-size));
+    grid-template-rows: repeat(3, var(--cell-size));
+    text-align: center;
+    border: 3px solid darkgrey;
+    background-color: rgba(147, 238, 238, 0.3);
+    overflow: hidden;
+    > button {
+        background-color: transparent;
+        border: 0;
+        border-radius: 0;
+        padding: 0;
+        margin: 0;
+        font-size: 2.5rem;
+    }
+
+    > button:nth-child(3n + 2) {
+        border-left: 3px solid darkblue;
+        border-right: 3px solid darkblue;
+    }
+
+    > button:nth-child(n + 4):nth-child(-n + 6) {
+        border-top: 3px solid darkblue;
+        border-bottom: 3px solid darkblue;
+    }
+}
+
+button:hover {
+        background-color: rgba(34, 255, 119, 0.3);
+        cursor: grab;
+    }
+
+button:active {
+    cursor: grabbing;
+}
+
+#history-panel {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    padding: 0.6rem;
+    width: min(90vw, 34rem);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+#history-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+#history-list li {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 6px;
+    margin: 0;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+}
+
+#history-list li:hover {
+    background: rgba(34, 255, 119, 0.2);
+}
+
+.history-game-title {
+    margin: 0 0 0.5rem;
+    font-weight: 700;
+}
+
+.history-board {
+    --preview-cell-size: 2rem;
+    display: grid;
+    grid-template-columns: repeat(3, var(--preview-cell-size));
+    grid-template-rows: repeat(3, var(--preview-cell-size));
+    text-align: center;
+    border: 3px solid darkgrey;
+    width: fit-content;
+}
+
+.history-board-cell {
+    background-color: rgba(147, 238, 238, 0.3);
+    border: 0;
+    border-radius: 0;
+    display: grid;
+    place-items: center;
+    font-size: 1.2rem;
+}
+
+.history-board-cell:nth-child(3n + 2) {
+    border-left: 3px solid darkblue;
+    border-right: 3px solid darkblue;
+}
+
+.history-board-cell:nth-child(n + 4):nth-child(-n + 6) {
+    border-top: 3px solid darkblue;
+    border-bottom: 3px solid darkblue;
+}

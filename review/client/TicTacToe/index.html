@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="main.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>Tic Tac Toe</h1>
+        <h2 id="current-player"></h2>
+    </header>
+    <main>
+        <button id="reset">Reset</button>
+        <button id="save-game">Save Game</button>
+        <section class="board" id="board">
+            <button class="cell"></button>
+            <button class="cell"></button>
+            <button class="cell"></button>
+            <button class="cell"></button>
+            <button class="cell"></button>
+            <button class="cell"></button>
+            <button class="cell"></button>
+            <button class="cell"></button>
+            <button class="cell"></button>
+        </section>
+        <button id="surrender">Surrender</button>
+        <button id="past-games">Past Games</button>
+        <section id="history-panel" hidden>
+            <h3>Saved Games</h3>
+            <ul id="history-list"></ul>
+        </section>
+    </main>
+    <footer>
+    </footer>
+</body>
+</html>
