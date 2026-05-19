@@ -33,7 +33,6 @@ export async function POST(request, { params }) {
 
     await User.findByIdAndUpdate(user._id, {
       $inc: { totalScore: result.score },
-      'streak.lastActivityDate': new Date(),
     });
 
     return NextResponse.json({

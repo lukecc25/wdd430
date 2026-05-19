@@ -7,9 +7,11 @@ import {
 } from '@clerk/nextjs';
 import './globals.css';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: 'CookQuest',
-  description: 'Bite-sized cooking lessons with score tracking and streaks.',
+  description: 'Bite-sized cooking lessons with score tracking.',
 };
 
 export default function RootLayout({ children }) {

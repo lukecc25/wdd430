@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useAuthedFetch } from '@/lib/useAuthedFetch';
 
-export default function LessonRunner({ lessonId, onStatus, onSubmitted, onClose }) {
+export default function LessonRunner({ lessonId, onError, onSubmitted, onClose }) {
   const authedFetch = useAuthedFetch();
   const [lesson, setLesson] = useState(null);
   const [answers, setAnswers] = useState({});
@@ -21,7 +21,7 @@ export default function LessonRunner({ lessonId, onStatus, onSubmitted, onClose 
     (async () => {
       const res = await fetch(`/api/lessons/${lessonId}`);
       if (!res.ok) {
-        onStatus?.(`Could not load lesson (${res.status})`);
+        onError?.(`Could not load lesson (${res.status})`);
         return;
       }
       const data = await res.json();
@@ -35,7 +35,7 @@ export default function LessonRunner({ lessonId, onStatus, onSubmitted, onClose 
     return () => {
       cancelled = true;
     };
-  }, [lessonId, onStatus]);
+  }, [lessonId, onError]);
 
   if (!lessonId) return null;
 
@@ -60,12 +60,11 @@ export default function LessonRunner({ lessonId, onStatus, onSubmitted, onClose 
     });
 
     if (!res.ok) {
-      onStatus?.(`Submit failed (${res.status})`);
+      onError?.(`Submit failed (${res.status})`);
       return;
     }
 
     const data = await res.json();
-    onStatus?.('');
     setResult(data);
     onSubmitted?.();
   }
@@ -78,7 +77,6 @@ export default function LessonRunner({ lessonId, onStatus, onSubmitted, onClose 
   function handleRedoLesson() {
     setResult(null);
     setAnswers({});
-    onStatus?.('');
   }
 
   if (result) {
@@ -90,7 +88,7 @@ export default function LessonRunner({ lessonId, onStatus, onSubmitted, onClose 
 
     return (
       <div className="lesson-runner lesson-runner--complete">
-        <h3>{lesson.title}</h3>
+        <h2 className="lesson-runner__title">{lesson.title}</h2>
 
         <div className={`lesson-results ${perfect ? 'lesson-results--perfect' : ''}`}>
           {perfect ? (
@@ -138,7 +136,7 @@ export default function LessonRunner({ lessonId, onStatus, onSubmitted, onClose 
       <button type="button" className="lesson-runner__back-link" onClick={handleBackToLessons}>
         ← Back to lessons
       </button>
-      <h3>{lesson.title}</h3>
+      <h2 className="lesson-runner__title">{lesson.title}</h2>
       <form onSubmit={handleSubmit}>
         {lesson.questions.map((q, qi) => (
           <fieldset key={q._id || qi} className="lesson-question-box">

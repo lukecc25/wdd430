@@ -86,7 +86,7 @@ h3 {
   align-items: center;
   gap: 14px;
   padding: 14px 16px;
-  background: linear-gradient(160deg, #6b5542 0%, var(--card-raised) 100%);
+  background: linear-gradient(160deg, var(--card-raised) 0%, var(--card) 100%);
   border: 1px solid var(--border);
   border-radius: 10px;
   margin-bottom: 16px;
@@ -237,7 +237,11 @@ h3 {
   border-radius: 12px;
 }
 
-.lesson-runner fieldset,
+.lesson-runner__title {
+  margin: 0 0 16px;
+  font-size: 1.25rem;
+}
+
 .lesson-question-box {
   border: 1px solid var(--lesson-silver-border);
   border-radius: 8px;
@@ -246,7 +250,6 @@ h3 {
   background: rgba(45, 50, 56, 0.85);
 }
 
-.lesson-runner fieldset h3,
 .lesson-question {
   margin: 0 0 16px;
   padding: 0;
@@ -378,9 +381,12 @@ h3 {
   gap: 8px;
 }
 
-.status {
-  margin-top: 20px;
+.app-error {
+  margin-top: 16px;
+  padding: 12px 14px;
   font-size: 14px;
-  color: var(--muted);
-  min-height: 18px;
+  color: var(--danger);
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-border);
+  border-radius: 8px;
 }

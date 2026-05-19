@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@clerk/nextjs';
 import { useAuthedFetch } from '@/lib/useAuthedFetch';
 
-export default function ProfileCard({ onStatus, refreshKey = 0 }) {
+export default function ProfileCard({ onError, refreshKey = 0 }) {
   const { isLoaded } = useAuth();
   const authedFetch = useAuthedFetch();
   const [user, setUser] = useState(null);
@@ -17,7 +17,7 @@ export default function ProfileCard({ onStatus, refreshKey = 0 }) {
     (async () => {
       const res = await authedFetch('/api/users/me');
       if (!res.ok) {
-        onStatus?.(`Profile load failed (${res.status})`);
+        onError?.(`Profile load failed (${res.status})`);
         return;
       }
       const data = await res.json();
@@ -27,7 +27,7 @@ export default function ProfileCard({ onStatus, refreshKey = 0 }) {
     return () => {
       cancelled = true;
     };
-  }, [authedFetch, isLoaded, onStatus, refreshKey]);
+  }, [authedFetch, isLoaded, onError, refreshKey]);
 
   if (!user) {
     return (
