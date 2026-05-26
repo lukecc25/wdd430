@@ -1,12 +1,10 @@
 import { NextResponse } from 'next/server';
-import connectDB from '@/lib/db';
-import Lesson from '@/lib/models/Lesson';
+import { getLessonsList } from '@/lib/lessonData';
 import { handleApiError } from '@/lib/apiErrors';
 
 export async function GET() {
   try {
-    await connectDB();
-    const lessons = await Lesson.find({}, 'title description difficulty slug').lean();
+    const lessons = await getLessonsList();
     return NextResponse.json(lessons);
   } catch (err) {
     return handleApiError(err);

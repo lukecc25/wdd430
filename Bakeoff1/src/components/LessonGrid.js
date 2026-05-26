@@ -6,40 +6,31 @@ import { useAuthedFetch } from '@/lib/useAuthedFetch';
 
 const PER_PAGE = 3;
 
-export default function LessonGrid({ onSelectLesson, refreshKey = 0 }) {
+export default function LessonGrid({
+  lessons = [],
+  progress: initialProgress = {},
+  onSelectLesson,
+  refreshKey = 0,
+}) {
   const { isLoaded, isSignedIn } = useAuth();
   const authedFetch = useAuthedFetch();
-  const [lessons, setLessons] = useState([]);
-  const [progress, setProgress] = useState({});
+  const [progress, setProgress] = useState(initialProgress);
   const [page, setPage] = useState(0);
 
   useEffect(() => {
-    let cancelled = false;
-
-    (async () => {
-      const res = await fetch('/api/lessons');
-      const data = await res.json();
-      if (!cancelled) setLessons(data);
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+    setProgress(initialProgress);
+  }, [initialProgress]);
 
   useEffect(() => {
-    if (!isLoaded || !isSignedIn) {
-      setProgress({});
-      return;
-    }
+    if (!isLoaded || !isSignedIn || refreshKey === 0) return;
 
     let cancelled = false;
 
     (async () => {
       const res = await authedFetch('/api/lessons/progress');
-      if (!res.ok) return;
+      if (!res.ok || cancelled) return;
       const data = await res.json();
-      if (!cancelled) setProgress(data.progress || {});
+      setProgress(data.progress || {});
     })();
 
     return () => {
@@ -50,14 +41,6 @@ export default function LessonGrid({ onSelectLesson, refreshKey = 0 }) {
   const totalPages = Math.max(1, Math.ceil(lessons.length / PER_PAGE));
   const safePage = Math.min(page, totalPages - 1);
   const visible = lessons.slice(safePage * PER_PAGE, safePage * PER_PAGE + PER_PAGE);
-
-  function goPrev() {
-    setPage((p) => Math.max(0, p - 1));
-  }
-
-  function goNext() {
-    setPage((p) => Math.min(totalPages - 1, p + 1));
-  }
 
   return (
     <div className="lessons-carousel">
@@ -94,7 +77,7 @@ export default function LessonGrid({ onSelectLesson, refreshKey = 0 }) {
           <button
             type="button"
             className="lessons-carousel__btn"
-            onClick={goPrev}
+            onClick={() => setPage((p) => Math.max(0, p - 1))}
             disabled={safePage === 0}
             aria-label="Previous lessons"
           >
@@ -106,7 +89,7 @@ export default function LessonGrid({ onSelectLesson, refreshKey = 0 }) {
           <button
             type="button"
             className="lessons-carousel__btn"
-            onClick={goNext}
+            onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
             disabled={safePage >= totalPages - 1}
             aria-label="Next lessons"
           >
@@ -117,4 +100,3 @@ export default function LessonGrid({ onSelectLesson, refreshKey = 0 }) {
     </div>
   );
 }
-

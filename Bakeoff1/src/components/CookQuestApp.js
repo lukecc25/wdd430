@@ -1,20 +1,27 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Show } from '@clerk/nextjs';
 import ProfileCard from '@/components/ProfileCard';
 import LessonGrid from '@/components/LessonGrid';
 import LessonRunner from '@/components/LessonRunner';
 
-export default function CookQuestApp() {
-  const [status, setStatus] = useState('');
+export default function CookQuestApp({ initialLessons = [], initialProgress = {} }) {
+  const router = useRouter();
+  const [error, setError] = useState('');
   const [activeLessonId, setActiveLessonId] = useState(null);
   const [profileRefresh, setProfileRefresh] = useState(0);
+
+  function handleLessonSubmitted() {
+    setProfileRefresh((n) => n + 1);
+    router.refresh();
+  }
 
   return (
     <>
       <p className="tagline">
-        Bite-sized cooking lessons. Sign in to track your score and streaks.
+        Bite-sized cooking lessons. Sign in to track your score.
       </p>
 
       <Show when="signed-out">
@@ -26,19 +33,21 @@ export default function CookQuestApp() {
 
       <Show when="signed-in">
         <section>
-          <ProfileCard onStatus={setStatus} refreshKey={profileRefresh} />
+          <ProfileCard onError={setError} refreshKey={profileRefresh} />
 
           {activeLessonId ? (
             <LessonRunner
               lessonId={activeLessonId}
-              onStatus={setStatus}
-              onSubmitted={() => setProfileRefresh((n) => n + 1)}
+              onError={setError}
+              onSubmitted={handleLessonSubmitted}
               onClose={() => setActiveLessonId(null)}
             />
           ) : (
             <>
               <h2>Lessons</h2>
               <LessonGrid
+                lessons={initialLessons}
+                progress={initialProgress}
                 onSelectLesson={setActiveLessonId}
                 refreshKey={profileRefresh}
               />
@@ -47,9 +56,11 @@ export default function CookQuestApp() {
         </section>
       </Show>
 
-      <div className="status" role="status">
-        {status}
-      </div>
+      {error ? (
+        <p className="app-error" role="alert">
+          {error}
+        </p>
+      ) : null}
     </>
   );
 }

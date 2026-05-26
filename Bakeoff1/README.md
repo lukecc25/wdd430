@@ -37,7 +37,6 @@ src/
 ├── lib/              # db, auth, models, services, hooks
 ├── middleware.js
 └── instrumentation.js
-specs/cookquest/      # planning docs
 ```
 
 ## API
@@ -46,5 +45,6 @@ specs/cookquest/      # planning docs
 | ------ | ---- | ---- |
 | GET | `/api/lessons` | public |
 | GET | `/api/lessons/:id` | public |
+| GET | `/api/lessons/progress` | Clerk |
 | POST | `/api/lessons/:id/attempts` | Clerk |
 | GET | `/api/users/me` | Clerk |
