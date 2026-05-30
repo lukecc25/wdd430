@@ -23,6 +23,7 @@ export default defineNuxtConfig({
   app: {
     head: {
       title: 'CookQuest',
+      link: [{ rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
       meta: [
         {
           name: 'description',
