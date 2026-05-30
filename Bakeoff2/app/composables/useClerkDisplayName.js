@@ -10,6 +10,20 @@ export function clerkWelcomeName(clerkUser) {
   return 'Chef';
 }
 
+export function profileFromClerkUser(clerkUser) {
+  if (!clerkUser) return null;
+  return {
+    firstName: clerkUser.firstName || '',
+    lastName: clerkUser.lastName || '',
+    email:
+      clerkUser.primaryEmailAddress?.emailAddress ||
+      clerkUser.emailAddresses?.[0]?.emailAddress ||
+      '',
+    imageUrl: clerkUser.imageUrl || '',
+    totalScore: 0,
+  };
+}
+
 export function profileDisplayName(profile) {
   if (!profile) return '';
   const name = [profile.firstName, profile.lastName].filter(Boolean).join(' ');

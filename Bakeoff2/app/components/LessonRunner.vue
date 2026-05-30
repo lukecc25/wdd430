@@ -9,21 +9,37 @@ const authedFetch = useAuthedFetch();
 const lesson = ref(null);
 const answers = ref({});
 const result = ref(null);
+const phase = ref('intro');
+
+function introText(currentLesson) {
+  const content = String(currentLesson?.lessonContent || '').trim();
+  if (content) return content;
+  return String(currentLesson?.description || '').trim();
+}
+
+function resetLessonState() {
+  answers.value = {};
+  result.value = null;
+  phase.value = 'intro';
+}
 
 watch(
   () => props.lessonId,
   async (lessonId) => {
     if (!lessonId) {
       lesson.value = null;
-      result.value = null;
+      resetLessonState();
       return;
     }
 
+    resetLessonState();
+
     try {
-      const data = await $fetch(`/api/lessons/${lessonId}`);
+      const data = await authedFetch(`/api/lessons/${lessonId}`);
       lesson.value = data;
-      answers.value = {};
-      result.value = null;
+      if (!introText(data)) {
+        phase.value = 'quiz';
+      }
     } catch (err) {
       const status = err?.statusCode || err?.status;
       emit('error', `Could not load lesson${status ? ` (${status})` : ''}`);
@@ -42,13 +58,18 @@ const percent = computed(() => {
 });
 
 function handleBackToLessons() {
-  result.value = null;
+  resetLessonState();
   emit('close');
+}
+
+function handleStartQuiz() {
+  phase.value = 'quiz';
 }
 
 function handleRedoLesson() {
   result.value = null;
   answers.value = {};
+  phase.value = introText(lesson.value) ? 'intro' : 'quiz';
 }
 
 async function handleSubmit(event) {
@@ -81,7 +102,7 @@ async function handleSubmit(event) {
 
   <div
     v-else-if="result"
-    class="lesson-runner lesson-runner--complete"
+    class="lesson-runner"
   >
     <h2 class="lesson-runner__title">{{ lesson.title }}</h2>
 
@@ -121,11 +142,32 @@ async function handleSubmit(event) {
     </div>
   </div>
 
+  <div v-else-if="phase === 'intro'" class="lesson-runner">
+    <button type="button" class="lesson-runner__back-link" @click="handleBackToLessons">
+      ← Back to lessons
+    </button>
+    <h2 class="lesson-runner__title">{{ lesson.title }}</h2>
+    <div class="lesson-intro">
+      <p class="lesson-intro__label">Before the quiz</p>
+      <p
+        v-for="(paragraph, index) in introText(lesson).split('\n\n')"
+        :key="index"
+        class="lesson-intro__text"
+      >
+        {{ paragraph }}
+      </p>
+    </div>
+    <button type="button" class="lesson-intro__start" @click="handleStartQuiz">
+      Start quiz →
+    </button>
+  </div>
+
   <div v-else class="lesson-runner">
     <button type="button" class="lesson-runner__back-link" @click="handleBackToLessons">
       ← Back to lessons
     </button>
     <h2 class="lesson-runner__title">{{ lesson.title }}</h2>
+    <p class="muted lesson-quiz__hint">Quiz time — answer every question below.</p>
     <form @submit="handleSubmit">
       <fieldset
         v-for="(q, qi) in lesson.questions"

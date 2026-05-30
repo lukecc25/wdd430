@@ -4,35 +4,11 @@ const PER_PAGE = 3;
 const props = defineProps({
   lessons: { type: Array, default: () => [] },
   progress: { type: Object, default: () => ({}) },
-  refreshKey: { type: Number, default: 0 },
 });
 
 const emit = defineEmits(['selectLesson']);
 
-const { isLoaded } = useAuth();
-const authedFetch = useAuthedFetch();
-const progressState = ref({ ...props.progress });
 const page = ref(0);
-
-watch(
-  () => props.progress,
-  (value) => {
-    progressState.value = { ...(value || {}) };
-  },
-  { deep: true }
-);
-
-async function loadProgress() {
-  if (!isLoaded.value) return;
-  try {
-    const data = await authedFetch('/api/lessons/progress');
-    progressState.value = data.progress || {};
-  } catch {
-    // keep existing progress on failure
-  }
-}
-
-watch(() => [isLoaded.value, props.refreshKey], loadProgress, { immediate: true });
 
 const totalPages = computed(() =>
   Math.max(1, Math.ceil(props.lessons.length / PER_PAGE))
@@ -50,6 +26,10 @@ const visible = computed(() =>
 function lessonKey(lesson) {
   return lesson._id?.toString?.() ?? lesson._id;
 }
+
+function lessonProgress(lesson) {
+  return props.progress[lessonKey(lesson)];
+}
 </script>
 
 <template>
@@ -62,18 +42,30 @@ function lessonKey(lesson) {
         :class="[
           'lesson-card',
           `lesson-card--${lesson.difficulty}`,
-          progressState[lessonKey(lesson)] ? 'lesson-card--completed' : '',
+          lessonProgress(lesson) ? 'lesson-card--completed' : '',
         ]"
         @click="emit('selectLesson', lessonKey(lesson))"
       >
-        <span v-if="progressState[lessonKey(lesson)]" class="lesson-card__completed">
+        <span v-if="lessonProgress(lesson)" class="lesson-card__completed">
           Completed
+        </span>
+        <span v-if="lesson.isCommunity" class="lesson-card__badge lesson-card__badge--community">
+          Shared
+        </span>
+        <span
+          v-else-if="!lesson.isOfficial && lesson.visibility === 'private'"
+          class="lesson-card__badge lesson-card__badge--private"
+        >
+          Private
         </span>
         <strong>{{ lesson.title }}</strong>
         <span class="muted">{{ lesson.difficulty }}</span>
-        <span v-if="progressState[lessonKey(lesson)]" class="lesson-card__score">
-          Score: {{ progressState[lessonKey(lesson)].score }} /
-          {{ progressState[lessonKey(lesson)].totalPossible }}
+        <span v-if="lesson.authorName && lesson.isCommunity" class="lesson-card__author muted">
+          by {{ lesson.authorName }}
+        </span>
+        <span v-if="lessonProgress(lesson)" class="lesson-card__score">
+          Score: {{ lessonProgress(lesson).score }} /
+          {{ lessonProgress(lesson).totalPossible }}
         </span>
         <p>{{ lesson.description || '' }}</p>
       </button>

@@ -10,21 +10,6 @@ const { user: clerkUser } = useUser();
 const authedFetch = useAuthedFetch();
 const user = ref(null);
 
-function profileFromClerk() {
-  const u = clerkUser.value;
-  if (!u) return null;
-  return {
-    firstName: u.firstName || '',
-    lastName: u.lastName || '',
-    email:
-      u.primaryEmailAddress?.emailAddress ||
-      u.emailAddresses?.[0]?.emailAddress ||
-      '',
-    imageUrl: u.imageUrl || '',
-    totalScore: 0,
-  };
-}
-
 async function loadProfile() {
   if (!isLoaded.value) return;
 
@@ -34,7 +19,7 @@ async function loadProfile() {
   } catch (err) {
     const status = err?.statusCode || err?.status;
     const detail = err?.data?.message || err?.statusMessage || err?.message;
-    const fallback = profileFromClerk();
+    const fallback = profileFromClerkUser(clerkUser.value);
 
     if (fallback) {
       user.value = fallback;
