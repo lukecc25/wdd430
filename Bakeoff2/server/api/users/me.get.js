@@ -1,10 +1,8 @@
-import connectDB from '../../lib/db.js';
 import { requireAuthUser } from '../../lib/auth.js';
 import { handleApiError } from '../../lib/apiErrors.js';
 
 export default defineEventHandler(async (event) => {
   try {
-    await connectDB();
     const user = await requireAuthUser(event);
 
     return {

@@ -8,6 +8,7 @@ const { welcomeName } = useClerkDisplayName();
 
 const error = ref('');
 const activeLessonId = ref(null);
+const showCreateLesson = ref(false);
 const profileRefresh = ref(0);
 
 function handleLessonSubmitted() {
@@ -15,8 +16,23 @@ function handleLessonSubmitted() {
   refreshNuxtData('home');
 }
 
+function handleLessonCreated(lesson) {
+  showCreateLesson.value = false;
+  profileRefresh.value += 1;
+  refreshNuxtData('home');
+  if (lesson?._id) {
+    activeLessonId.value = lesson._id?.toString?.() ?? lesson._id;
+  }
+}
+
 function handleError(message) {
   error.value = message;
+}
+
+function openCreateLesson() {
+  activeLessonId.value = null;
+  showCreateLesson.value = true;
+  error.value = '';
 }
 </script>
 
@@ -54,8 +70,19 @@ function handleError(message) {
             @submitted="handleLessonSubmitted"
             @close="activeLessonId = null"
           />
+          <TestCreator
+            v-else-if="showCreateLesson"
+            @created="handleLessonCreated"
+            @cancel="showCreateLesson = false"
+            @error="handleError"
+          />
           <template v-else>
-            <h2>Lessons</h2>
+            <div class="lessons-header">
+              <h2>Lessons</h2>
+              <button type="button" class="test-creator__open" @click="openCreateLesson">
+                + Create lesson
+              </button>
+            </div>
             <p v-if="!lessons.length" class="muted">
               No lessons loaded. Set DATABASE_URL in .env and restart
               <code>npm run dev</code>.
@@ -64,7 +91,6 @@ function handleError(message) {
               v-else
               :lessons="lessons"
               :progress="progress"
-              :refresh-key="profileRefresh"
               @select-lesson="activeLessonId = $event"
             />
           </template>

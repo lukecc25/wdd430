@@ -1,10 +1,10 @@
 <template>
-  <div class="container">
-    <header class="app-header">
-      <h1>🍳 CookQuest</h1>
+  <div class="app-shell">
+    <header class="site-header">
+      <h1 class="site-header__brand">🍳 CookQuest</h1>
       <div class="auth-actions">
         <ClerkLoading>
-          <span class="muted">…</span>
+          <span class="site-header__loading">…</span>
         </ClerkLoading>
         <ClerkLoaded>
           <SignedOut>
@@ -18,8 +18,10 @@
       </div>
     </header>
 
-    <main>
-      <NuxtPage />
-    </main>
+    <div class="container">
+      <main>
+        <NuxtPage />
+      </main>
+    </div>
   </div>
 </template>

@@ -4,23 +4,19 @@ const authedFetch = useAuthedFetch();
 
 async function fetchHomeData() {
   let lessons = [];
+  let progress = {};
+
   try {
-    lessons = await $fetch('/api/lessons');
+    if (userId.value) {
+      lessons = await authedFetch('/api/lessons');
+    } else {
+      lessons = await $fetch('/api/lessons');
+    }
   } catch (err) {
     console.error('[home] /api/lessons failed:', err?.data?.message || err?.message || err);
   }
 
-  let progress = {};
-
-  if (import.meta.server) {
-    const event = useRequestEvent();
-    const { getClerkUserIdFromEvent } = await import('~~/server/lib/auth.js');
-    const { getProgressByClerkUserId } = await import('~~/server/lib/lessonData.js');
-    const clerkUserId = await getClerkUserIdFromEvent(event);
-    if (clerkUserId) {
-      progress = await getProgressByClerkUserId(clerkUserId);
-    }
-  } else if (userId.value) {
+  if (userId.value) {
     try {
       const data = await authedFetch('/api/lessons/progress');
       progress = data.progress || {};
@@ -39,8 +35,8 @@ const { data: homeData, refresh: refreshHome } = await useAsyncData('home', fetc
   default: () => ({ lessons: [], progress: {} }),
 });
 
-watch([isLoaded, userId], ([loaded, id]) => {
-  if (loaded && id) refreshHome();
+watch(isLoaded, (loaded) => {
+  if (loaded) refreshHome();
 }, { immediate: true });
 </script>
 

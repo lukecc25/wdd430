@@ -5,6 +5,8 @@ export const lessonSeed = [
     slug: 'ingredient-substitutions',
     title: 'Ingredient Substitutions',
     description: 'Learn what to use when you run out of pantry staples.',
+    lessonContent:
+      'Running out of an ingredient does not have to ruin a recipe. Smart swaps use what you already have while keeping flavor and texture close to the original.\n\nButtermilk adds tang and tenderness in baking — milk plus a little acid works in a pinch. Eggs bind and lift batters; fruit purées can stand in when you are short one egg.',
     difficulty: 'beginner',
     questions: [
       {
@@ -29,6 +31,8 @@ export const lessonSeed = [
     slug: 'safe-chicken-temperature',
     title: 'Safe Chicken Temperature',
     description: 'Cook poultry to the right temperature and avoid foodborne illness.',
+    lessonContent:
+      'Chicken must reach a safe internal temperature to kill harmful bacteria. Color and smell are not reliable — a thermometer is the only sure check.\n\nThe USDA recommends 165°F (74°C) for poultry. Insert the probe in the thickest part of the breast or thigh, avoiding bone. Store raw chicken in the fridge for only 1–2 days.',
     difficulty: 'intermediate',
     questions: [
       {
@@ -66,6 +70,8 @@ export const lessonSeed = [
     slug: 'pasta-basics',
     title: 'Pasta Basics',
     description: 'Boil, season, and sauce pasta like a pro.',
+    lessonContent:
+      'Great pasta starts with well-salted water — it should taste like the sea. That salt seasons the noodles from the inside, not just the sauce on top.\n\nWait for a rolling boil before adding pasta so it cooks evenly and does not clump. Save a cup of starchy pasta water before draining; it helps sauce cling beautifully.',
     difficulty: 'beginner',
     questions: [
       {
@@ -100,6 +106,8 @@ export const lessonSeed = [
     slug: 'knife-safety',
     title: 'Knife Safety',
     description: 'Handle sharp tools confidently and cut without injury.',
+    lessonContent:
+      'A sharp knife is safer than a dull one because it cuts cleanly without slipping. Always cut on a stable board and keep your free hand in a claw grip — knuckles forward, fingertips tucked.\n\nNever leave knives loose in a drawer. A block or magnetic strip protects the edge and your fingers when you reach for tools.',
     difficulty: 'beginner',
     questions: [
       {
@@ -134,6 +142,8 @@ export const lessonSeed = [
     slug: 'food-storage',
     title: 'Food Storage',
     description: 'Keep leftovers fresh and your fridge organized.',
+    lessonContent:
+      'The fridge should stay at 40°F (4°C) or below — use a thermometer to check. Cool leftovers within two hours of cooking and store them in shallow, covered containers.\n\nCooked rice is a common leftover but spoils faster than many foods. Eat refrigerated rice within 3–4 days and reheat until steaming hot.',
     difficulty: 'intermediate',
     questions: [
       {
@@ -158,6 +168,8 @@ export const lessonSeed = [
     slug: 'seasoning-fundamentals',
     title: 'Seasoning Fundamentals',
     description: 'Balance salt, acid, and heat in everyday cooking.',
+    lessonContent:
+      'Seasoning is tasting and adjusting — not just adding salt at the start. Soups and sauces concentrate as they cook, so taste near the end before serving.\n\nA squeeze of lemon or splash of vinegar can rescue a dish that tastes flat or too rich. Acid brightens flavors the way salt amplifies them.',
     difficulty: 'beginner',
     questions: [
       {
@@ -192,6 +204,8 @@ export const lessonSeed = [
     slug: 'egg-doneness',
     title: 'Egg Doneness',
     description: 'Soft, jammy, or hard — know the timing.',
+    lessonContent:
+      'Egg timing is everything. For a jammy yolk with a set white, boil for about 6–7 minutes, then shock in ice water to stop cooking.\n\nA green-gray ring around the yolk means the egg overcooked — it is harmless but rubbery. Gentle heat and a quick ice bath give the best texture.',
     difficulty: 'intermediate',
     questions: [
       {
@@ -221,6 +235,8 @@ export const lessonSeed = [
     slug: 'baking-pantry-math',
     title: 'Baking Pantry Math',
     description: 'Quick conversions every home baker should know.',
+    lessonContent:
+      'Baking rewards precision. Remember: 3 teaspoons equal 1 tablespoon, and measuring by weight is often more accurate than cups for flour.\n\n"Creaming" butter and sugar means beating until pale and fluffy — that traps air for tender cakes. Room-temperature eggs blend smoothly into creamed butter without curdling the batter.',
     difficulty: 'advanced',
     questions: [
       {
@@ -262,7 +278,19 @@ export const lessonSeed = [
 
 export default async function seedLessons() {
   for (const lesson of lessonSeed) {
-    await Lesson.updateOne({ slug: lesson.slug }, { $setOnInsert: lesson }, { upsert: true });
+    await Lesson.updateOne(
+      { slug: lesson.slug },
+      {
+        $set: {
+          ...lesson,
+          isOfficial: true,
+          visibility: 'public',
+          createdBy: null,
+        },
+      },
+      { upsert: true }
+    );
   }
+
   console.log('[db] seed lessons ensured');
 }
