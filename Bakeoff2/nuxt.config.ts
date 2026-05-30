@@ -8,9 +8,7 @@ export default defineNuxtConfig({
   modules: ['@clerk/nuxt'],
 
   nitro: {
-    prerender: {
-      routes: ['/'],
-    },
+    preset: 'node-server',
   },
 
   clerk: {

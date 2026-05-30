@@ -35,7 +35,7 @@ npm run dev
 
 Open http://localhost:3000.
 
-On first startup, CookQuest **seeds 8 official lessons** into MongoDB if the database is empty.
+On first API request, CookQuest **seeds 8 official lessons** into MongoDB if the database is empty.
 
 ## Build & deploy
 
@@ -73,9 +73,8 @@ Bakeoff2/
 ├── server/
 │   ├── api/                 # REST API (lessons, progress, users)
 │   ├── middleware/clerk.js
-│   ├── lib/
-│   ├── models/
-│   └── plugins/seed.js
+│   ├── lib/                 # seedLessons runs on first API request
+│   └── models/
 ├── .github/agents/          # FrameworkStudent agent for learning mode
 └── nuxt.config.ts           # ssr: false (static SPA)
 ```
