@@ -1,6 +1,8 @@
 <script setup>
 import { useFirebaseAuth } from './composables/useFirebaseAuth.js';
 import AuthPanel from './components/AuthPanel.vue';
+import HomeView from './views/HomeView.vue';
+
 const { user, ready, logOut } = useFirebaseAuth();
 </script>
 
@@ -28,7 +30,7 @@ const { user, ready, logOut } = useFirebaseAuth();
 
     <div class="container">
       <main>
-        <RouterView />
+        <HomeView />
       </main>
     </div>
     <img

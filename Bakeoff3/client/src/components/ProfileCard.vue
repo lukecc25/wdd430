@@ -3,7 +3,6 @@ import { computed, watch } from 'vue';
 import { useQuery } from '@vue/apollo-composable';
 import { ME_QUERY } from '../graphql/operations.js';
 import { useFirebaseAuth, profileDisplayName } from '../composables/useFirebaseAuth.js';
-import { useClientMounted } from '../composables/useClientMounted.js';
 
 const props = defineProps({
   refreshKey: { type: Number, default: 0 },
@@ -12,10 +11,9 @@ const props = defineProps({
 const emit = defineEmits(['error']);
 
 const { user: firebaseUser, ready } = useFirebaseAuth();
-const { isClientMounted } = useClientMounted();
 
 const { result, error, refetch, loading } = useQuery(ME_QUERY, null, () => ({
-  enabled: isClientMounted.value && ready.value && !!firebaseUser.value,
+  enabled: ready.value && !!firebaseUser.value,
   fetchPolicy: 'network-only',
 }));
 

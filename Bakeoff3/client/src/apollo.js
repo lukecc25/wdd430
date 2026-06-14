@@ -6,10 +6,9 @@ if (typeof window === 'undefined') {
   throw new Error('Apollo Client is client-only (CSR). Do not import on the server.');
 }
 
-// In dev, use Vite's /graphql proxy. In production, use VITE_GRAPHQL_URL.
-const graphqlUri = import.meta.env.PROD
-  ? (import.meta.env.VITE_GRAPHQL_URL || '/graphql')
-  : '/graphql';
+// Same-origin /graphql in dev (Vite proxy) and on Render (unified Node server).
+// Set VITE_GRAPHQL_URL only when the API is on a different host.
+const graphqlUri = import.meta.env.VITE_GRAPHQL_URL || '/graphql';
 
 const httpLink = createHttpLink({
   uri: graphqlUri,

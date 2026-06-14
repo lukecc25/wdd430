@@ -77,7 +77,7 @@ async function findLessonDoc(lessonId) {
   return bySlug.docs[0] || null;
 }
 
-export async function getUserByFirebaseUid(firebaseUid) {
+async function getUserByFirebaseUid(firebaseUid) {
   const snap = await usersCol().where('firebaseUid', '==', firebaseUid).limit(1).get();
   return snap.docs[0] || null;
 }

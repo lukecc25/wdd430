@@ -3,26 +3,24 @@ import { computed, watch } from 'vue';
 import { useQuery } from '@vue/apollo-composable';
 import { LESSONS_QUERY, PROGRESS_QUERY } from '../graphql/operations.js';
 import { useFirebaseAuth } from '../composables/useFirebaseAuth.js';
-import { useClientMounted } from '../composables/useClientMounted.js';
 import CookQuestApp from '../components/CookQuestApp.vue';
 
 const { user, ready } = useFirebaseAuth();
-const { isClientMounted } = useClientMounted();
 
 const lessonsQuery = useQuery(LESSONS_QUERY, null, () => ({
-  enabled: isClientMounted.value && ready.value,
+  enabled: ready.value,
   fetchPolicy: 'network-only',
 }));
 
 const progressQuery = useQuery(PROGRESS_QUERY, null, () => ({
-  enabled: isClientMounted.value && ready.value && !!user.value,
+  enabled: ready.value && !!user.value,
   fetchPolicy: 'network-only',
 }));
 
 const lessons = computed(() => lessonsQuery.result.value?.lessons ?? []);
 
 const loading = computed(() => {
-  if (!isClientMounted.value || !ready.value) return true;
+  if (!ready.value) return true;
   // Only block the UI on the first lessons fetch — not during background refetch
   return lessonsQuery.loading.value && lessons.value.length === 0;
 });

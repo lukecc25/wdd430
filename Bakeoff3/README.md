@@ -4,7 +4,7 @@ Gamified cooking lessons — ported from Bakeoff2 with a new stack:
 
 | Layer | Technology |
 | ----- | ---------- |
-| Frontend | **Vue 3** + Vite (client-side rendering SPA) + Vue Router |
+| Frontend | **Vue 3** + Vite (client-side rendering SPA) |
 | API | **GraphQL** (Apollo Server) |
 | Database | **Firebase** (Firestore + Firebase Auth) |
 
@@ -108,11 +108,54 @@ Endpoint: `http://localhost:4000/graphql`
 
 Send `Authorization: Bearer <Firebase ID token>` for authenticated operations.
 
-## Deploy notes
+## Build & deploy (Render)
 
-- Deploy **server** and **client** separately (e.g. Render for API, static host for Vue).
-- Set `VITE_GRAPHQL_URL` to your production GraphQL URL when building the client.
-- Enable Email/Password auth and configure Firestore security rules for production.
+Same pattern as **Bakeoff2**: one **Web Service** builds the Vue SPA and runs a Node server that serves both the static client and `/graphql`.
+
+```bash
+cd Bakeoff3
+npm install
+npm run build    # outputs client/dist
+npm run start    # GraphQL + SPA on PORT (default 4000)
+```
+
+Health check: `GET /health`
+
+### Render setup
+
+1. **New → Web Service** → connect repo → set **Root Directory** to `Bakeoff3` (or use `render.yaml` Blueprint).
+2. **Build command:** `npm install && npm run build`
+3. **Start command:** `npm run start`
+4. **Health check path:** `/health`
+
+### Environment variables (Render dashboard)
+
+**Runtime** (server — from `server/.env.example`):
+
+| Variable | Description |
+| -------- | ----------- |
+| `FIREBASE_PROJECT_ID` | Firebase project ID |
+| `FIREBASE_CLIENT_EMAIL` | Service account email |
+| `FIREBASE_PRIVATE_KEY` | Service account private key (paste with `\n` for newlines) |
+
+**Build + runtime** (client — from `client/.env.example`; Vite bakes these into the bundle at build time):
+
+| Variable | Description |
+| -------- | ----------- |
+| `VITE_FIREBASE_API_KEY` | Web app API key |
+| `VITE_FIREBASE_AUTH_DOMAIN` | e.g. `cookquest-3b152.firebaseapp.com` |
+| `VITE_FIREBASE_PROJECT_ID` | Same project ID |
+| `VITE_FIREBASE_STORAGE_BUCKET` | Firebase storage bucket |
+| `VITE_FIREBASE_MESSAGING_SENDER_ID` | Sender ID |
+| `VITE_FIREBASE_APP_ID` | Web app ID |
+
+Do **not** set `VITE_GRAPHQL_URL` for unified Render deploy — the client uses same-origin `/graphql`.
+
+### Firebase Auth on production
+
+In [Firebase Console → Authentication → Settings → Authorized domains](https://console.firebase.google.com/project/cookquest-3b152/authentication/settings), add your Render hostname (e.g. `cookquest-bakeoff3.onrender.com`).
+
+Lock down Firestore security rules before going live.
 
 ## Troubleshooting
 

@@ -2,7 +2,6 @@
 import { ref, computed, watch } from 'vue';
 import { useQuery, useMutation } from '@vue/apollo-composable';
 import { LESSON_QUERY, SUBMIT_ATTEMPT } from '../graphql/operations.js';
-import { useClientMounted } from '../composables/useClientMounted.js';
 
 const props = defineProps({
   lessonId: { type: String, required: true },
@@ -14,13 +13,11 @@ const answers = ref({});
 const result = ref(null);
 const phase = ref('intro');
 
-const { isClientMounted } = useClientMounted();
-
 const { result: lessonResult, error: lessonError, loading } = useQuery(
   LESSON_QUERY,
   () => ({ id: props.lessonId }),
   () => ({
-    enabled: isClientMounted.value && !!props.lessonId,
+    enabled: !!props.lessonId,
     fetchPolicy: 'network-only',
   })
 );

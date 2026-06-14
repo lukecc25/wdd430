@@ -1,0 +1,10 @@
+# Render Blueprint — same pattern as Bakeoff2: one Node web service serves SPA + API.
+# Set Firebase env vars in the Render dashboard (see README).
+services:
+  - type: web
+    name: cookquest-bakeoff3
+    runtime: node
+    rootDir: Bakeoff3
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    healthCheckPath: /health
