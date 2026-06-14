@@ -410,10 +410,43 @@ h3 {
 }
 
 .feedback-item {
-  padding: 8px 12px;
-  border-radius: 6px;
-  margin-bottom: 6px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
   font-size: 14px;
+}
+
+.feedback-item p {
+  margin: 0 0 6px;
+}
+
+.feedback-item p:last-child {
+  margin-bottom: 0;
+}
+
+.feedback-item__heading {
+  font-weight: 600;
+}
+
+.feedback-item__prompt {
+  color: var(--text);
+  font-size: 13px;
+}
+
+.feedback-item__your {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.feedback-item__correct {
+  color: var(--text);
+  font-size: 13px;
+}
+
+.feedback-item__why {
+  color: var(--muted);
+  font-size: 13px;
+  font-style: italic;
 }
 
 .feedback-item.correct {
@@ -425,6 +458,10 @@ h3 {
 .feedback-item.incorrect {
   background: var(--danger-bg);
   border: 1px solid var(--danger-border);
+  color: var(--danger);
+}
+
+.feedback-item.incorrect .feedback-item__heading {
   color: var(--danger);
 }
 
