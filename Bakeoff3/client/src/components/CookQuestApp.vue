@@ -1,21 +1,49 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
+import { useQuery } from '@vue/apollo-composable';
+import { LESSONS_QUERY, PROGRESS_QUERY } from '../graphql/operations.js';
 import { useFirebaseAuth, welcomeName } from '../composables/useFirebaseAuth.js';
 import ProfileCard from './ProfileCard.vue';
 import LessonGrid from './LessonGrid.vue';
 import LessonRunner from './LessonRunner.vue';
 import LessonCreator from './LessonCreator.vue';
 
-defineProps({
-  lessons: { type: Array, default: () => [] },
-  progress: { type: Object, default: () => ({}) },
-  loading: { type: Boolean, default: false },
+const { user, ready } = useFirebaseAuth();
+const displayWelcome = computed(() => welcomeName(user.value));
+
+const lessonsQuery = useQuery(LESSONS_QUERY, null, () => ({
+  enabled: ready.value,
+  fetchPolicy: 'network-only',
+}));
+
+const progressQuery = useQuery(PROGRESS_QUERY, null, () => ({
+  enabled: ready.value && !!user.value,
+  fetchPolicy: 'network-only',
+}));
+
+const lessons = computed(() => lessonsQuery.result.value?.lessons ?? []);
+
+const loading = computed(() => {
+  if (!ready.value) return true;
+  return lessonsQuery.loading.value && lessons.value.length === 0;
 });
 
-const emit = defineEmits(['refresh']);
+const progress = computed(() => {
+  const entries = progressQuery.result.value?.progress ?? [];
+  return Object.fromEntries(
+    entries.map((p) => [p.lessonId, { score: p.score, totalPossible: p.totalPossible }])
+  );
+});
 
-const { user } = useFirebaseAuth();
-const displayWelcome = computed(() => welcomeName(user.value));
+function refetchHome() {
+  lessonsQuery.refetch();
+  if (user.value) progressQuery.refetch();
+}
+
+watch(user, () => {
+  lessonsQuery.refetch();
+  progressQuery.refetch();
+});
 
 const error = ref('');
 const activeLessonId = ref(null);
@@ -24,13 +52,13 @@ const profileRefresh = ref(0);
 
 function handleLessonSubmitted() {
   profileRefresh.value += 1;
-  emit('refresh');
+  refetchHome();
 }
 
 function handleLessonCreated(lesson) {
   showCreateLesson.value = false;
   profileRefresh.value += 1;
-  emit('refresh');
+  refetchHome();
   if (lesson?.id) activeLessonId.value = lesson.id;
 }
 
