@@ -68,7 +68,7 @@ async function handleSubmit(event) {
 <template>
   <div class="test-creator">
     <button type="button" class="lesson-runner__back-link" @click="emit('cancel')">
-      ← Back to lessons
+      Back to lessons
     </button>
     <h2 class="lesson-runner__title">Create your own lesson</h2>
     <p class="test-creator__intro">
@@ -180,7 +180,7 @@ async function handleSubmit(event) {
         <button type="submit" class="test-creator__submit" :disabled="saving">
           {{
             saving
-              ? 'Saving…'
+              ? 'Saving...'
               : form.visibility === 'public'
                 ? 'Publish lesson'
                 : 'Save private lesson'

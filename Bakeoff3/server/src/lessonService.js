@@ -38,22 +38,36 @@ function canViewLesson(lesson, viewerUserId) {
 }
 
 export async function ensureSeeded() {
-  const snap = await lessonsCol().where('isOfficial', '==', true).limit(1).get();
-  if (!snap.empty) return;
+  let created = 0;
+  let updated = 0;
 
-  const batch = db.batch();
   for (const lesson of lessonSeed) {
-    const ref = lessonsCol().doc();
-    batch.set(ref, {
-      ...lesson,
+    const snap = await lessonsCol().where('slug', '==', lesson.slug).limit(1).get();
+    const payload = {
+      slug: lesson.slug,
+      title: lesson.title,
+      description: lesson.description || '',
+      lessonContent: lesson.lessonContent || lesson.description || '',
+      difficulty: lesson.difficulty,
+      questions: lesson.questions,
       isOfficial: true,
       visibility: 'public',
       createdBy: null,
-      createdAt: new Date(),
-    });
+      authorName: '',
+    };
+
+    if (!snap.empty) {
+      await snap.docs[0].ref.set({ ...payload, updatedAt: new Date() }, { merge: true });
+      updated += 1;
+    } else {
+      await lessonsCol().add({ ...payload, createdAt: new Date() });
+      created += 1;
+    }
   }
-  await batch.commit();
-  console.log('[firebase] seeded official lessons');
+
+  if (created || updated) {
+    console.log(`[firebase] official lessons: ${created} created, ${updated} updated`);
+  }
 }
 
 async function findLessonDoc(lessonId) {
@@ -118,6 +132,7 @@ export async function getLessonsList(viewerUserId = null) {
     return 0;
   });
 
+  // Fallback if Firestore is empty (e.g. seed not run yet)
   if (items.length === 0) {
     return lessonSeed.map(({ slug, title, description, difficulty }) => ({
       id: slug,

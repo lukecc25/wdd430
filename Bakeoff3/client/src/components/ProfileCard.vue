@@ -44,16 +44,9 @@ const displayName = computed(() => {
 
 <template>
   <div v-if="loading && !user" class="profile-card">
-    <strong>Loading profile…</strong>
+    <strong>Loading profile...</strong>
   </div>
   <div v-else class="profile-card">
-    <img
-      v-if="user?.imageUrl || firebaseUser?.photoURL"
-      :src="user?.imageUrl || firebaseUser?.photoURL"
-      alt=""
-      width="44"
-      height="44"
-    />
     <div>
       <strong>{{ displayName }}</strong>
       <div class="muted">

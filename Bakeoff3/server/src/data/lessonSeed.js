@@ -1,3 +1,4 @@
+// Official CookQuest lessons — ported from Bakeoff2 (Nuxt/MongoDB) for Firestore + GraphQL.
 export const lessonSeed = [
   {
     slug: 'ingredient-substitutions',

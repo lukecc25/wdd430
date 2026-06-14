@@ -21,6 +21,12 @@ const progressQuery = useQuery(PROGRESS_QUERY, null, () => ({
 
 const lessons = computed(() => lessonsQuery.result.value?.lessons ?? []);
 
+const loading = computed(() => {
+  if (!isClientMounted.value || !ready.value) return true;
+  // Only block the UI on the first lessons fetch — not during background refetch
+  return lessonsQuery.loading.value && lessons.value.length === 0;
+});
+
 const progress = computed(() => {
   const entries = progressQuery.result.value?.progress ?? [];
   return Object.fromEntries(
@@ -43,7 +49,7 @@ watch(user, () => {
   <CookQuestApp
     :lessons="lessons"
     :progress="progress"
-    :loading="!isClientMounted || !ready || lessonsQuery.loading.value"
+    :loading="loading"
     @refresh="refetchHome"
   />
 </template>

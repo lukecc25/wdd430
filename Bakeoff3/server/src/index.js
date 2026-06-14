@@ -6,8 +6,11 @@ import { expressMiddleware } from '@apollo/server/express4';
 import { typeDefs } from './schema.js';
 import { resolvers } from './resolvers.js';
 import { createContext } from './context.js';
+import { ensureSeeded } from './lessonService.js';
 
 const PORT = Number(process.env.PORT) || 4000;
+
+await ensureSeeded();
 
 const app = express();
 const server = new ApolloServer({ typeDefs, resolvers });

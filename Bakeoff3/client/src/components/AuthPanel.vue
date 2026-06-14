@@ -71,7 +71,7 @@ async function handleGoogleSignIn() {
 
     <form v-else class="auth-panel__form" @submit="handleSubmit">
       <button type="button" class="auth-panel__back" :disabled="busy" @click="closeForm">
-        ← Back
+        Back
       </button>
       <input v-model="email" type="email" placeholder="Email" required autocomplete="email" />
       <input
@@ -83,7 +83,7 @@ async function handleGoogleSignIn() {
         :autocomplete="view === 'signin' ? 'current-password' : 'new-password'"
       />
       <button type="submit" class="auth-btn" :disabled="busy">
-        {{ busy ? '…' : view === 'signin' ? 'Log in' : 'Create account' }}
+        {{ busy ? 'Please wait...' : view === 'signin' ? 'Log in' : 'Create account' }}
       </button>
       <button
         v-if="view === 'signin'"

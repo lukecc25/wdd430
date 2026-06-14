@@ -35,7 +35,11 @@ Bakeoff3/
 Console: [cookquest-3b152](https://console.firebase.google.com/project/cookquest-3b152)
 
 1. **Authentication** → Sign-in method → enable **Email/Password** (required) and optionally **Google** (supported in the app header).
-2. **Firestore Database** → Create database (test mode is fine for class).
+2. **Firestore Database** → **Create database** (required — the server cannot start without this):
+   - Pick a region (e.g. `us-central1`).
+   - Start in **test mode** for class work (lock down rules before production).
+   - This enables the [Cloud Firestore API](https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=cookquest-3b152) for the project.
+   - If you see `PERMISSION_DENIED` / `SERVICE_DISABLED` on `npm run dev`, the database was never created — complete this step and wait 1–2 minutes.
 3. **Web app config** (client):
    - Project settings (gear) → **Your apps** → add a **Web** app if you do not have one.
    - Copy the `firebaseConfig` values into `client/.env` (see `client/.env.example`).  
@@ -74,9 +78,16 @@ npm run dev:server
 npm run dev:client
 ```
 
+Or run **both** from `Bakeoff3/` in one terminal:
+
+```bash
+npm install
+npm run dev
+```
+
 Open http://localhost:5173
 
-Optional: seed official lessons only
+Official lessons from Bakeoff2 are upserted into Firestore on server start (by `slug`). You can also run:
 
 ```bash
 npm run seed
@@ -102,3 +113,9 @@ Send `Authorization: Bearer <Firebase ID token>` for authenticated operations.
 - Deploy **server** and **client** separately (e.g. Render for API, static host for Vue).
 - Set `VITE_GRAPHQL_URL` to your production GraphQL URL when building the client.
 - Enable Email/Password auth and configure Firestore security rules for production.
+
+## Troubleshooting
+
+### `PERMISSION_DENIED: Cloud Firestore API has not been used...`
+
+Firestore is not set up yet for your Firebase project. In [Firebase Console → Firestore](https://console.firebase.google.com/project/cookquest-3b152/firestore), click **Create database**, then restart the server after a minute or two.

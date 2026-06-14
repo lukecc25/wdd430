@@ -47,7 +47,7 @@ function openCreateLesson() {
 
 <template>
   <div>
-    <p v-if="loading" class="muted">Loading…</p>
+    <p v-if="loading" class="muted">Loading...</p>
 
     <template v-else>
       <p class="tagline">
@@ -69,6 +69,7 @@ function openCreateLesson() {
 
         <LessonRunner
           v-if="activeLessonId"
+          :key="activeLessonId"
           :lesson-id="activeLessonId"
           @error="handleError"
           @submitted="handleLessonSubmitted"

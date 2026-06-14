@@ -79,7 +79,7 @@ function lessonProgress(lesson) {
         aria-label="Previous lessons"
         @click="page = Math.max(0, page - 1)"
       >
-        ← Prev
+        Prev
       </button>
       <span class="lessons-carousel__indicator">{{ safePage + 1 }} / {{ totalPages }}</span>
       <button
@@ -89,7 +89,7 @@ function lessonProgress(lesson) {
         aria-label="Next lessons"
         @click="page = Math.min(totalPages - 1, page + 1)"
       >
-        Next →
+        Next
       </button>
     </div>
   </div>

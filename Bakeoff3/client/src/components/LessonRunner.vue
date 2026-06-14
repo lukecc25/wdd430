@@ -43,10 +43,9 @@ function resetLessonState() {
 
 watch(
   () => props.lessonId,
-  () => {
-    resetLessonState();
-  },
-  { immediate: true }
+  (id, prevId) => {
+    if (id !== prevId) resetLessonState();
+  }
 );
 
 watch(lesson, (data) => {
@@ -56,7 +55,16 @@ watch(lesson, (data) => {
 });
 
 watch(lessonError, (err) => {
-  if (err) emit('error', `Could not load lesson: ${err.message}`);
+  if (!err) return;
+  const msg = err.message || 'Unknown error';
+  if (/failed to fetch|network error|load failed/i.test(msg)) {
+    emit(
+      'error',
+      'Could not load lesson — is the GraphQL server running? Start it with: npm run dev:server (in Bakeoff3/server)'
+    );
+    return;
+  }
+  emit('error', `Could not load lesson: ${msg}`);
 });
 
 const perfect = computed(
@@ -107,7 +115,7 @@ async function handleSubmit(event) {
 
 <template>
   <div v-if="loading && !lesson" class="lesson-runner">
-    <p class="muted">Loading lesson…</p>
+    <p class="muted">Loading lesson...</p>
   </div>
 
   <div v-else-if="result" class="lesson-runner">
@@ -132,7 +140,7 @@ async function handleSubmit(event) {
           :key="i"
           :class="['feedback-item', f.correct ? 'correct' : 'incorrect']"
         >
-          Q{{ i + 1 }}: {{ f.correct ? '✓' : '✗' }} (+{{ f.points }}) — {{ f.explanation }}
+          Q{{ i + 1 }}: {{ f.correct ? 'Correct' : 'Incorrect' }} (+{{ f.points }}) — {{ f.explanation }}
         </li>
       </ul>
       <div class="lesson-results__actions">
@@ -148,7 +156,7 @@ async function handleSubmit(event) {
 
   <div v-else-if="lesson && phase === 'intro'" class="lesson-runner">
     <button type="button" class="lesson-runner__back-link" @click="handleBackToLessons">
-      ← Back to lessons
+      Back to lessons
     </button>
     <h2 class="lesson-runner__title">{{ lesson.title }}</h2>
     <div class="lesson-intro">
@@ -162,13 +170,13 @@ async function handleSubmit(event) {
       </p>
     </div>
     <button type="button" class="lesson-intro__start" @click="handleStartQuiz">
-      Start quiz →
+      Start quiz
     </button>
   </div>
 
   <div v-else-if="lesson" class="lesson-runner">
     <button type="button" class="lesson-runner__back-link" @click="handleBackToLessons">
-      ← Back to lessons
+      Back to lessons
     </button>
     <h2 class="lesson-runner__title">{{ lesson.title }}</h2>
     <p class="muted lesson-quiz__hint">Quiz time — answer every question below.</p>
