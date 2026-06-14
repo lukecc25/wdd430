@@ -12,7 +12,7 @@ export async function createContext({ req }) {
   try {
     const decoded = await auth.verifyIdToken(token);
     const user = await syncUserFromFirebase(decoded);
-    return { user, viewerUserId: user.id, firebaseUid: decoded.uid };
+    return { user, viewerUserId: user.id };
   } catch (err) {
     console.error('[auth] token verify failed:', err?.message);
     return { user: null, viewerUserId: null };
