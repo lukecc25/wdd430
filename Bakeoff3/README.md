@@ -18,8 +18,8 @@ The **client** is a pure **client-side rendered** app: `index.html` loads one Ja
 Bakeoff3/
 ├── client/          # Vue SPA (Apollo Client → GraphQL)
 │   └── src/
+│       ├── App.vue
 │       ├── components/
-│       ├── views/
 │       ├── composables/
 │       └── graphql/
 └── server/          # Apollo Server + Firebase Admin
@@ -67,8 +67,8 @@ cd Bakeoff3
 npm run install:all
 
 # Copy env files
-cp .env.example server/.env
-cp .env.example client/.env
+cp client/.env.example client/.env
+cp server/.env.example server/.env
 # Edit both with your Firebase values
 
 # Terminal 1 — GraphQL API

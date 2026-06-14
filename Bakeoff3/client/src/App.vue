@@ -1,7 +1,7 @@
 <script setup>
 import { useFirebaseAuth } from './composables/useFirebaseAuth.js';
 import AuthPanel from './components/AuthPanel.vue';
-import HomeView from './views/HomeView.vue';
+import CookQuestApp from './components/CookQuestApp.vue';
 
 const { user, ready, logOut } = useFirebaseAuth();
 </script>
@@ -30,7 +30,7 @@ const { user, ready, logOut } = useFirebaseAuth();
 
     <div class="container">
       <main>
-        <HomeView />
+        <CookQuestApp />
       </main>
     </div>
     <img
