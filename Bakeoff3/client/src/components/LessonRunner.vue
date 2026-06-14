@@ -137,7 +137,24 @@ async function handleSubmit(event) {
           :key="i"
           :class="['feedback-item', f.correct ? 'correct' : 'incorrect']"
         >
-          Q{{ i + 1 }}: {{ f.correct ? 'Correct' : 'Incorrect' }} (+{{ f.points }}) — {{ f.explanation }}
+          <template v-if="f.correct">
+            Q{{ i + 1 }}: Correct (+{{ f.points }}) — {{ f.explanation }}
+          </template>
+          <template v-else>
+            <p class="feedback-item__heading">
+              Q{{ i + 1 }}: Incorrect (+{{ f.points }})
+            </p>
+            <p v-if="lesson?.questions[i]?.prompt" class="feedback-item__prompt">
+              {{ lesson.questions[i].prompt }}
+            </p>
+            <p v-if="f.yourAnswer" class="feedback-item__your">
+              Your answer: {{ f.yourAnswer }}
+            </p>
+            <p class="feedback-item__correct">
+              Correct answer: <strong>{{ f.correctAnswer }}</strong>
+            </p>
+            <p class="feedback-item__why">{{ f.explanation }}</p>
+          </template>
         </li>
       </ul>
       <div class="lesson-results__actions">

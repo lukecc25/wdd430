@@ -67,6 +67,8 @@ export const SUBMIT_ATTEMPT = gql`
         correct
         points
         explanation
+        correctAnswer
+        yourAnswer
       }
     }
   }

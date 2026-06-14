@@ -47,6 +47,8 @@ export const typeDefs = `#graphql
     correct: Boolean!
     points: Int!
     explanation: String!
+    correctAnswer: String
+    yourAnswer: String
   }
 
   type AttemptResult {
